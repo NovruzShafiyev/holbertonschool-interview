@@ -42,3 +42,44 @@ heap_t *heap_insert(heap_t **root, int value)
 
     return (new_node);
 }
+
+/**
+ * find_parent - Finds the parent for a new node in a binary heap
+ * @root: Pointer to the root of the binary heap
+ *
+ * Return: Pointer to the parent node
+ */
+heap_t *find_parent(heap_t *root)
+{
+    heap_t *parent = NULL;
+
+    if (!root)
+        return (NULL);
+
+    while (root)
+    {
+        parent = root;
+        root = root->left;
+    }
+
+    return (parent);
+}
+
+/**
+ * heapify_up - Restores the Max Heap property after insertion
+ * @node: Pointer to the newly inserted node
+ */
+void heapify_up(heap_t *node)
+{
+    int temp;
+    heap_t *parent;
+
+    while (node->parent && node->n > node->parent->n)
+    {
+        parent = node->parent;
+        temp = parent->n;
+        parent->n = node->n;
+        node->n = temp;
+        node = parent;
+    }
+}
