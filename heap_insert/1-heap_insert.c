@@ -1,61 +1,90 @@
 #include "binary_trees.h"
 
 /**
- * find_parent - Find the parent for the new node
- * @root: Pointer to the root node
- * Return: Pointer to the parent node
+ * heap_size - Function that calculates the size of a heap
+ * @root: pointer to the root node of the Heap
+ * Return: heap size
  */
-heap_t *find_parent(heap_t *root)
+int heap_size(heap_t *root)
 {
-    while (root && root->left)
-    {
-        if (!root->right)
-            return (root);
-        root = root->left;
-    }
-    return (root);
+	int left, right;
+
+	if (root == NULL)
+		return (0);
+	left = heap_size(root->left);
+	right = heap_size(root->right);
+	return (left + right + 1);
 }
 
 /**
- * heapify_up - Heapify up after insertion
- * @node: Pointer to the newly inserted node
+ * insert_level_order - Function that inserts a node into a Max Binary Heap
+ * @root: Pointer to the root node of the Heap
+ * @idx: current index in heap
+ * @size: size of the heap
+ * @value: The value store in the node to be inserted
+ * Return: Pointer to the inserted node, or NULL on failure
  */
-void heapify_up(heap_t *node)
+heap_t *insert_level_order(heap_t *root, int idx, int size, int value)
 {
-    while (node->parent && node->n > node->parent->n)
-    {
-        int temp = node->n;
-        node->n = node->parent->n;
-        node->parent->n = temp;
-        node = node->parent;
-    }
+	heap_t *left, *right;
+
+	if (root == NULL)
+		return (NULL);
+	if (idx == size / 2)
+	{
+		if (root->left == NULL)
+		{
+			root->left = binary_tree_node(root, value);
+			return (root->left);
+		}
+		root->right = binary_tree_node(root, value);
+		return (root->right);
+	}
+	left = insert_level_order(root->left, (2 * idx), size, value);
+	right = insert_level_order(root->right, (2 * idx + 1), size, value);
+	if (left)
+		return (left);
+	return (right);
 }
 
 /**
- * heap_insert - Inserts a value into a Max Binary Heap
+ * swap - Function that swaps two integers
+ * @a: pointer to a int
+ * @b: pointer to another int
+ */
+void swap(int *a, int *b)
+{
+	int tmp = *a;
+
+	*a = *b;
+	*b = tmp;
+}
+
+/**
+ * heap_insert - Function that inserts a value into a Max Binary Heap
  * @root: Double pointer to the root node of the Heap
- * @value: Value to store in the new node
- *
+ * @value: The value store in the node to be inserted
  * Return: Pointer to the inserted node, or NULL on failure
  */
 heap_t *heap_insert(heap_t **root, int value)
 {
-    heap_t *new_node, *parent;
+	heap_t *new_node;
+	int new_size;
 
-    new_node = binary_tree_node(NULL, value);
-    if (!new_node)
-        return (NULL);
-
-    if (!*root)
-        return (*root = new_node);
-
-    parent = find_parent(*root);
-    if (!parent->left)
-        parent->left = new_node;
-    else
-        parent->right = new_node;
-    new_node->parent = parent;
-    heapify_up(new_node);
-
-    return (new_node);
+	if (*root == NULL)
+	{
+		new_node = binary_tree_node(NULL, value);
+		*root = new_node;
+		return (new_node);
+	}
+	new_size = heap_size(*root) + 1;
+	new_node = insert_level_order(*root, 1, new_size, value);
+	for (; new_node->parent; new_node = new_node->parent)
+	{
+		if (new_node->parent->n < new_node->n)
+			swap(&new_node->parent->n, &new_node->n);
+		else
+			break;
+	}
+	return (new_node);
 }
