@@ -1,6 +1,10 @@
 #include <stdlib.h>
 #include "binary_trees.h"
 
+/* Function prototypes */
+heap_t *find_parent(heap_t *root);
+void heapify_up(heap_t *node);
+
 /**
  * heap_insert - Inserts a value into a Max Binary Heap
  * @root: Double pointer to the root node of the Heap
