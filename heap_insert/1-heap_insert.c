@@ -87,3 +87,4 @@ void heapify_up(heap_t *node)
         node = parent;
     }
 }
+
