@@ -5,7 +5,7 @@ a specific number of characters in a file using the Copy All and Paste operation
 """
 
 
-def min_operations(n):
+def minOperations(n):
 
     if n <= 1:
         return 0
@@ -21,9 +21,4 @@ def min_operations(n):
 
     return operations
 
-if __name__ == "__main__":
-    n = 4
-    print("Min # of operations to reach {} char: {}".format(n, minOperations(n)))
 
-    n = 12
-    print("Min # of operations to reach {} char: {}".format(n, minOperations(n)))
