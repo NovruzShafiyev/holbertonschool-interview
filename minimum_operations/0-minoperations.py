@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """
-Module to calculate the minimum number of operations required to achieve
-a specific number of characters in a file using the Copy All and Paste operations.
+Module to calculate the minimum number of operations
 """
 
 
@@ -20,5 +19,3 @@ def minOperations(n):
         divisor += 1
 
     return operations
-
-
