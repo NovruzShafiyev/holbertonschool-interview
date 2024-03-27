@@ -54,6 +54,38 @@ static void print_grid(int grid[3][3])
 }
 
 /**
+ * toppling - Perform toppling operation on the grid
+ * @grid: 3x3 grid
+ *
+ */
+static void toppling(int grid[3][3])
+{
+    int i, j, temp_grid[3][3];
+
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            temp_grid[i][j] = grid[i][j];
+        }
+    }
+
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 3; j++) {
+            if (temp_grid[i][j] > 3) {
+                grid[i][j] -= 4;
+                if (i > 0)
+                    grid[i - 1][j]++;
+                if (i < 2)
+                    grid[i + 1][j]++;
+                if (j > 0)
+                    grid[i][j - 1]++;
+                if (j < 2)
+                    grid[i][j + 1]++;
+            }
+        }
+    }
+}
+
+/**
  * sandpiles_sum - Computes the sum of two sandpiles
  * @grid1: First 3x3 grid
  * @grid2: Second 3x3 grid
@@ -90,36 +122,4 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
                 break;
         }
     } while (unstable);
-}
-
-/**
- * toppling - Perform toppling operation on the grid
- * @grid: 3x3 grid
- *
- */
-static void toppling(int grid[3][3])
-{
-    int i, j, temp_grid[3][3];
-
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
-            temp_grid[i][j] = grid[i][j];
-        }
-    }
-
-    for (i = 0; i < 3; i++) {
-        for (j = 0; j < 3; j++) {
-            if (temp_grid[i][j] > 3) {
-                grid[i][j] -= 4;
-                if (i > 0)
-                    grid[i - 1][j]++;
-                if (i < 2)
-                    grid[i + 1][j]++;
-                if (j > 0)
-                    grid[i][j - 1]++;
-                if (j < 2)
-                    grid[i][j + 1]++;
-            }
-        }
-    }
 }
