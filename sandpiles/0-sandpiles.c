@@ -5,6 +5,7 @@
  * print_grid - Print 3x3 grid
  * @grid: 3x3 grid
  *
+ * Description: This function prints a 3x3 grid.
  */
 static void print_grid(int grid[3][3])
 {
@@ -27,7 +28,8 @@ static void print_grid(int grid[3][3])
  * @grid1: Left 3x3 grid
  * @grid2: Right 3x3 grid
  *
- * Description: Computes the sum of two sandpiles. Modifies grid1 to be stable.
+ * Description: This function computes the sum of two sandpiles and modifies
+ * grid1 to be stable.
  */
 void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 {
@@ -38,6 +40,8 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
     while (!stable)
     {
         stable = 1;
+
+        // Compute the sum of the two sandpiles
         for (i = 0; i < 3; i++)
         {
             for (j = 0; j < 3; j++)
@@ -48,11 +52,13 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
             }
         }
 
+        // Check if the sandpile is stable
         if (!stable)
         {
             printf("=\n");
-            print_grid(temp_grid);
+            print_grid(grid1);
 
+            // Topple the sandpile
             for (i = 0; i < 3; i++)
             {
                 for (j = 0; j < 3; j++)
@@ -64,8 +70,4 @@ void sandpiles_sum(int grid1[3][3], int grid2[3][3])
             }
         }
     }
-
-    // Print the stabilized sandpile
-    printf("=\n");
-    print_grid(grid1);
 }
