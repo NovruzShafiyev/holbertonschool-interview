@@ -1,33 +1,65 @@
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "sandpiles.h"
 
-/**
- * stable - Checks if sandpile is stable
- * @grid: 3x3 grid to be printed
- *
- * Return: Is sandpile stable or not(1,0)
- */
-int stable(int grid[3][3])
-{
-	int i, j;
 
+/**
+ * sandpiles_sum -  adds grid2 sandpile onto grid1. Prints intermediate,
+ *					unstable sandpiles.
+ * @grid1: first sandpile
+ * @grid2: second sandpile
+**/
+void sandpiles_sum(int grid1[3][3], int grid2[3][3])
+{
+	int i, j, unstable = 0;
+
+	/* ADD SANDPILES */
 	for (i = 0; i < 3; i++)
 		for (j = 0; j < 3; j++)
-			if (grid[i][j] > 3)
-				return (0);
+		{
+			grid1[i][j] += grid2[i][j];                         /* add cells */
+			grid2[i][j] = (grid1[i][j] > 3);    /* map cell state onto grid2 */
+			unstable += (grid1[i][j] > 3);         /* count cell if unstable */
+		}
 
-	return (1);
+	/* STABILIZE SANDPILE */
+	while (unstable)
+	{
+		print_grid(grid1);
+
+		/* stabilize sandpile (using grid2 as map to find unstable cells) */
+		for (i = 0; i < 3; i++)
+			for (j = 0; j < 3; j++)
+				if (grid2[i][j])
+				{
+					grid1[i][j] -= 4;           /* remove 4 grains from cell */
+					if (i + 1 < 3)                /* add grain to right cell */
+						grid1[i + 1][j] += 1;
+					if (i - 1 >= 0)                /* add grain to left cell */
+						grid1[i - 1][j] += 1;
+					if (j + 1 < 3)                  /* add grain to top cell */
+						grid1[i][j + 1] += 1;
+					if (j - 1 >= 0)              /* add grain to bottom cell */
+						grid1[i][j - 1] += 1;
+				}
+
+		/* re-count and re-map unstable cells */
+		for (unstable = 0, i = 0; i < 3; i++)
+			for (j = 0; j < 3; j++)
+			{
+				grid2[i][j] = (grid1[i][j] > 3);     /* map state onto grid2 */
+				unstable += (grid1[i][j] > 3);       /* count unstable cells */
+			}
+	}
 }
+
 /**
- * print_grid - Print 3x3 grid
- * @grid: 3x3 grid
- *
- */
+ * print_grid - prints a grid of numbers
+ * @grid: grid
+ **/
 static void print_grid(int grid[3][3])
 {
 	int i, j;
+
+	printf("=\n");
 
 	for (i = 0; i < 3; i++)
 	{
@@ -39,51 +71,4 @@ static void print_grid(int grid[3][3])
 		}
 		printf("\n");
 	}
-}
-
-/**
- * sandpiles_sum - Summs two sandpiles into grid1
- * @grid1: Left 3x3 grid
- * @grid2: Right 3x3 grid
- */
-void sandpiles_sum(int grid1[3][3], int grid2[3][3])
-{
-	int i, j;
-
-	for (i = 0; i < 3; i++)
-		for (j = 0; j < 3; j++)
-		{
-			grid1[i][j] += grid2[i][j];
-			grid2[i][j] = 0;
-		}
-
-	if (stable(grid1))
-		return;
-
-	do {
-		printf("=\n");
-		print_grid(grid1);
-		for (i = 0; i < 3; i++)
-			for (j = 0; j < 3; j++)
-				if (grid1[i][j] > 3)
-				{
-					grid2[i][j] -= 4;
-					if (i > 0)
-						grid2[i - 1][j] += 1;
-					if (i < 2)
-						grid2[i + 1][j] += 1;
-					if (j > 0)
-						grid2[i][j - 1] += 1;
-					if (j < 2)
-						grid2[i][j + 1] += 1;
-				}
-		for (i = 0; i < 3; i++)
-		{
-			for (j = 0; j < 3; j++)
-			{
-				grid1[i][j] += grid2[i][j];
-				grid2[i][j] = 0;
-			}
-		}
-	} while (!stable(grid1));
 }
