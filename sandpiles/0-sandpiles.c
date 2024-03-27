@@ -1,6 +1,25 @@
-#include "sandpiles.h"
+#include <stdlib.h>
 #include <stdio.h>
 
+#include "sandpiles.h"
+
+/**
+ * stable - Checks if sandpile is stable
+ * @grid: 3x3 grid to be printed
+ *
+ * Return: Is sandpile stable or not(1,0)
+ */
+int stable(int grid[3][3])
+{
+	int i, j;
+
+	for (i = 0; i < 3; i++)
+		for (j = 0; j < 3; j++)
+			if (grid[i][j] > 3)
+				return (0);
+
+	return (1);
+}
 /**
  * print_grid - Print 3x3 grid
  * @grid: 3x3 grid
@@ -8,83 +27,63 @@
  */
 static void print_grid(int grid[3][3])
 {
-    int i, j;
+	int i, j;
 
-    for (i = 0; i < 3; i++)
-    {
-        for (j = 0; j < 3; j++)
-        {
-            if (j)
-                printf(" ");
-            printf("%d", grid[i][j]);
-        }
-        printf("\n");
-    }
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			if (j)
+				printf(" ");
+			printf("%d", grid[i][j]);
+		}
+		printf("\n");
+	}
 }
 
 /**
- * sandpiles_sum - Computes the sum of two sandpiles
+ * sandpiles_sum - Summs two sandpiles into grid1
  * @grid1: Left 3x3 grid
  * @grid2: Right 3x3 grid
- *
- * Description: Computes the sum of two sandpiles. Modifies grid1 to be stable.
  */
 void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 {
-    int i, j;
-    int temp_grid[3][3];
+	int i, j;
 
-    // Compute the sum of two sandpiles
-    for (i = 0; i < 3; i++)
-    {
-        for (j = 0; j < 3; j++)
-        {
-            temp_grid[i][j] = grid1[i][j] + grid2[i][j];
-        }
-    }
+	for (i = 0; i < 3; i++)
+		for (j = 0; j < 3; j++)
+		{
+			grid1[i][j] += grid2[i][j];
+			grid2[i][j] = 0;
+		}
 
-    // Redistribute grains of sand until the resulting sandpile is stable
-    while (!stable(temp_grid))
-    {
-        printf("=\n");
-        print_grid(temp_grid);
+	if (stable(grid1))
+		return;
 
-        // Apply toppling rules to stabilize the sandpile
-        for (i = 0; i < 3; i++)
-        {
-            for (j = 0; j < 3; j++)
-            {
-                if (temp_grid[i][j] > 3)
-                {
-                    grid1[i][j] = temp_grid[i][j] - 4;
-                    if (i > 0)
-                        grid1[i - 1][j]++;
-                    if (i < 2)
-                        grid1[i + 1][j]++;
-                    if (j > 0)
-                        grid1[i][j - 1]++;
-                    if (j < 2)
-                        grid1[i][j + 1]++;
-                }
-                else
-                {
-                    grid1[i][j] = temp_grid[i][j];
-                }
-            }
-        }
-
-        // Update temp_grid for next iteration
-        for (i = 0; i < 3; i++)
-        {
-            for (j = 0; j < 3; j++)
-            {
-                temp_grid[i][j] = grid1[i][j];
-            }
-        }
-    }
-
-    // Print the final stable sandpile
-    printf("=\n");
-    print_grid(grid1);
+	do {
+		printf("=\n");
+		print_grid(grid1);
+		for (i = 0; i < 3; i++)
+			for (j = 0; j < 3; j++)
+				if (grid1[i][j] > 3)
+				{
+					grid2[i][j] -= 4;
+					if (i > 0)
+						grid2[i - 1][j] += 1;
+					if (i < 2)
+						grid2[i + 1][j] += 1;
+					if (j > 0)
+						grid2[i][j - 1] += 1;
+					if (j < 2)
+						grid2[i][j + 1] += 1;
+				}
+		for (i = 0; i < 3; i++)
+		{
+			for (j = 0; j < 3; j++)
+			{
+				grid1[i][j] += grid2[i][j];
+				grid2[i][j] = 0;
+			}
+		}
+	} while (!stable(grid1));
 }
-
