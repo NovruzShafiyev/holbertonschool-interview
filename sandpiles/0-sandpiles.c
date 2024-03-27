@@ -32,39 +32,59 @@ static void print_grid(int grid[3][3])
 void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 {
     int i, j;
-    int stable = 0;
     int temp_grid[3][3];
 
-    while (!stable)
+    // Compute the sum of two sandpiles
+    for (i = 0; i < 3; i++)
     {
-        stable = 1;
+        for (j = 0; j < 3; j++)
+        {
+            temp_grid[i][j] = grid1[i][j] + grid2[i][j];
+        }
+    }
+
+    // Redistribute grains of sand until the resulting sandpile is stable
+    while (!stable(temp_grid))
+    {
+        printf("=\n");
+        print_grid(temp_grid);
+
+        // Apply toppling rules to stabilize the sandpile
         for (i = 0; i < 3; i++)
         {
             for (j = 0; j < 3; j++)
             {
-                temp_grid[i][j] = grid1[i][j] + grid2[i][j];
                 if (temp_grid[i][j] > 3)
-                    stable = 0;
+                {
+                    grid1[i][j] = temp_grid[i][j] - 4;
+                    if (i > 0)
+                        grid1[i - 1][j]++;
+                    if (i < 2)
+                        grid1[i + 1][j]++;
+                    if (j > 0)
+                        grid1[i][j - 1]++;
+                    if (j < 2)
+                        grid1[i][j + 1]++;
+                }
+                else
+                {
+                    grid1[i][j] = temp_grid[i][j];
+                }
             }
         }
 
-        if (!stable)
+        // Update temp_grid for next iteration
+        for (i = 0; i < 3; i++)
         {
-            printf("=\n");
-            print_grid(temp_grid);
-
-            for (i = 0; i < 3; i++)
+            for (j = 0; j < 3; j++)
             {
-                for (j = 0; j < 3; j++)
-                {
-                    grid1[i][j] = temp_grid[i][j] - 4;
-                    if (grid1[i][j] < 0)
-                        grid1[i][j] = 0;
-                }
+                temp_grid[i][j] = grid1[i][j];
             }
         }
     }
 
+    // Print the final stable sandpile
     printf("=\n");
     print_grid(grid1);
 }
+
