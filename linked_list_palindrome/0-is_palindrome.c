@@ -28,7 +28,8 @@ int is_palindrome(listint_t **head)
         slow = slow->next;
     }
 
-    listint_t *second_half = slow;
+    listint_t *second_half;
+    second_half = slow;
     prev_slow->next = NULL;
     reverse_list(&second_half);
 
