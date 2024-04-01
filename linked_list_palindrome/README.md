@@ -1,1 +1,1 @@
-# holbertonschool-interview
+# Linked list palindrome
