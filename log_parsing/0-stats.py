@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import sys
 """Reads stdin line by line and computes metrics
 If count of lines is evenly divided by 10 and/or
 keyboardinterrupt
