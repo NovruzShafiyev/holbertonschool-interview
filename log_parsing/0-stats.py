@@ -1,5 +1,9 @@
 #!/usr/bin/python3
 import sys
+"""Reads stdin line by line and computes metrics
+If count of lines is evenly divided by 10 and/or
+keyboardinterrupt
+all info will be printed"""
 
 def print_statistics(total_size, status_counts):
     print(f"File size: {total_size}")
