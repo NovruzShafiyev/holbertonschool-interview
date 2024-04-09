@@ -17,9 +17,7 @@ code_status = {
     405: 0,
     500: 0}
 
-# Variable to store the total file size
 total_sizes = 0
-# Counter to keep track of the number of lines read
 count_line = 1
 
 
@@ -34,7 +32,6 @@ def printStats():
 
 
 try:
-    # Read lines from stdin one by one
     for line in sys.stdin:
         try:
             line = line[:-1]
@@ -44,7 +41,6 @@ try:
             if status_code in code_status:
                 code_status[status_code] += 1
         except Exception:
-            # Skip the line if it is not in the expected format
             pass
 
         """
