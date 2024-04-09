@@ -1,46 +1,61 @@
 #!/usr/bin/python3
-"""Reads stdin line by line and computes metrics
-If count of lines is evenly divided by 10 and/or
-keyboardinterrupt
-all info will be printed"""
+"""
+Write a script that reads stdin line by line and computes metrics
+"""
+import sys
 
-def print_statistics(total_size, status_counts):
-    print(f"File size: {total_size}")
-    for status_code, count in sorted(status_counts.items()):
-        print(f"{status_code}: {count}")
+"""
+Dictionary to store the number of lines for each status code
+"""
+code_status = {
+    200: 0,
+    301: 0,
+    400: 0,
+    401: 0,
+    403: 0,
+    404: 0,
+    405: 0,
+    500: 0}
 
-def parse_line(line):
-    parts = line.split()
-    if len(parts) != 7:
-        return None
-    ip, _, _, status_code, file_size = parts[:5]
-    if not ip.replace('.', '').isdigit():
-        return None
-    try:
-        status_code = int(status_code)
-        file_size = int(file_size)
-        return (status_code, file_size)
-    except ValueError:
-        return None
+# Variable to store the total file size
+total_sizes = 0
+# Counter to keep track of the number of lines read
+count_line = 1
 
-def main():
-    total_size = 0
-    status_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-    line_count = 0
 
-    try:
-        for line in sys.stdin:
-            line = line.strip()
-            parsed = parse_line(line)
-            if parsed:
-                status_code, file_size = parsed
-                total_size += file_size
-                status_counts[status_code] += 1
-                line_count += 1
-                if line_count % 10 == 0:
-                    print_statistics(total_size, status_counts)
-    except KeyboardInterrupt:
-        print_statistics(total_size, status_counts)
+def printStats():
+    """
+    Print the final statistics after all lines have been read
+    """
+    print('File size: {}'.format(total_sizes))
+    for code in sorted(code_status.keys()):
+        if code_status[code] != 0:
+            print('{}: {}'.format(code, code_status[code]))
 
-if __name__ == "__main__":
-    main()
+
+try:
+    # Read lines from stdin one by one
+    for line in sys.stdin:
+        try:
+            line = line[:-1]
+            parts = line.split(' ')
+            total_sizes += int(parts[-1])
+            status_code = int(parts[-2])
+            if status_code in code_status:
+                code_status[status_code] += 1
+        except Exception:
+            # Skip the line if it is not in the expected format
+            pass
+
+        """
+        Print the statistics every 10 lines or
+        when a keyboard interruption occurs
+        """
+        if count_line % 10 == 0:
+            printStats()
+        count_line += 1
+
+except KeyboardInterrupt:
+    printStats()
+    raise
+printStats()
