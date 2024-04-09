@@ -1,57 +1,49 @@
 #!/usr/bin/python3
 """
-Write a script that reads stdin line by line and computes metrics
+stats - script that reads stdin line by line
 """
+
 import sys
 
-"""
-Dictionary to store the number of lines for each status code
-"""
-code_status = {
-    200: 0,
-    301: 0,
-    400: 0,
-    401: 0,
-    403: 0,
-    404: 0,
-    405: 0,
-    500: 0}
 
-total_sizes = 0
-count_line = 1
+if __name__ == "__main__":
+    st_code = {"200": 0,
+               "301": 0,
+               "400": 0,
+               "401": 0,
+               "403": 0,
+               "404": 0,
+               "405": 0,
+               "500": 0}
+    count = 1
+    file_size = 0
 
-
-def printStats():
-    """
-    Print the final statistics after all lines have been read
-    """
-    print('File size: {}'.format(total_sizes))
-    for code in sorted(code_status.keys()):
-        if code_status[code] != 0:
-            print('{}: {}'.format(code, code_status[code]))
-
-
-try:
-    for line in sys.stdin:
+    def parse_line(line):
+        """Read, parse and store data"""
         try:
-            line = line[:-1]
-            parts = line.split(' ')
-            total_sizes += int(parts[-1])
-            status_code = int(parts[-2])
-            if status_code in code_status:
-                code_status[status_code] += 1
+            parsed_line = line.split()
+            status_code = parsed_line[-2]
+            if status_code in st_code.keys():
+                st_code[status_code] += 1
+            return int(parsed_line[-1])
         except Exception:
-            pass
+            return 0
 
-        """
-        Print the statistics every 10 lines or
-        when a keyboard interruption occurs
-        """
-        if count_line % 10 == 0:
-            printStats()
-        count_line += 1
+    def print_stats():
+        """Print stats in ascending order"""
+        print("File size: {}".format(file_size))
+        for key in sorted(st_code.keys()):
+            if st_code[key]:
+                print("{}: {}".format(key, st_code[key]))
 
-except KeyboardInterrupt:
-    printStats()
-    raise
-printStats()
+    try:
+        for line in sys.stdin:
+            file_size += parse_line(line)
+            if count % 10 == 0:
+                print_stats()
+            count += 1
+    except KeyboardInterrupt:
+        print_stats()
+        raise
+    print_stats()
+    
