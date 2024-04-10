@@ -1,67 +1,48 @@
 #!/usr/bin/python3
+"""
+Task - Script that reads stdin line by line and computes metrics
+"""
 
 import sys
-import signal
-
-# Dictionary to store status code counts
-status_counts = {
-    200: 0,
-    301: 0,
-    400: 0,
-    401: 0,
-    403: 0,
-    404: 0,
-    405: 0,
-    500: 0
-}
-
-total_file_size = 0
-line_count = 0
 
 
-def print_statistics():
-    """Prints the computed statistics."""
-    global total_file_size, line_count
-    if line_count > 0:
-        print("File size: {}".format(total_file_size))
-        for status_code, count in sorted(status_counts.items()):
-            if count > 0:
-                print("{}: {}".format(status_code, count))
-        sys.stdout.flush()
+if __name__ == "__main__":
+    st_code = {"200": 0,
+               "301": 0,
+               "400": 0,
+               "401": 0,
+               "403": 0,
+               "404": 0,
+               "405": 0,
+               "500": 0}
+    count = 1
+    file_size = 0
 
-
-def signal_handler(sig, frame):
-    """Handles keyboard interrupt signal and prints statistics."""
-    print_statistics()
-    sys.exit(0)
-
-
-# Registering signal handler for keyboard interrupt
-signal.signal(signal.SIGINT, signal_handler)
-
-try:
-    for line in sys.stdin:
+    def parse_line(line):
+        """ Read, parse and grab data"""
         try:
-            # Splitting the line by space
-            parts = line.strip().split()
+            parsed_line = line.split()
+            status_code = parsed_line[-2]
+            if status_code in st_code.keys():
+                st_code[status_code] += 1
+            return int(parsed_line[-1])
+        except Exception:
+            return 0
 
-            # Extracting relevant information
-            status_code = int(parts[-2])
-            file_size = int(parts[-1])
+    def print_stats():
+        """print stats in ascending order"""
+        print("File size: {}".format(file_size))
+        for key in sorted(st_code.keys()):
+            if st_code[key]:
+                print("{}: {}".format(key, st_code[key]))
 
-            # Updating statistics
-            status_counts[status_code] += 1
-            total_file_size += file_size
-            line_count += 1
-
-            # Printing statistics every 10 lines
-            if line_count % 10 == 0:
-                print_statistics()
-
-        except Exception as e:
-            # Skip the line if it doesn't match the specified format
-            continue
-
-except KeyboardInterrupt:
-    # Handling keyboard interrupt
-    print_statistics()
+    try:
+        for line in sys.stdin:
+            file_size += parse_line(line)
+            if count % 10 == 0:
+                print_stats()
+            count += 1
+    except KeyboardInterrupt:
+        print_stats()
+        raise
+    print_stats()
