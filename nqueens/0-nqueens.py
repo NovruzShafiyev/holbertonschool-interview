@@ -7,7 +7,7 @@ import sys
 
 
 def solution(board, res, n):
-    """Add the solution to the list of solutions"""
+    """Add the solution to the list of solution"""
     tmp = []
     for i in range(n):
         for j in range(n):
