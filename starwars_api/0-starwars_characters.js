@@ -8,7 +8,7 @@ const charNames = (characters, i = 0) => {
   if (i === characters.length) return;
   request(characters[i], (error, response, body) => {
     if (error) throw error;
-    /* convert a string of characters JSON to a javascript object and print it */
+    /* conver a string of characters JSON to a javascript object and print it */
     console.log(JSON.parse(body).name);
     /* call recursively the function charnames and increment it to pass at the next character */
     charNames(characters, i + 1);
