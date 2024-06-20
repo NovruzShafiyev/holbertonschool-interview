@@ -1,42 +1,25 @@
 #!/usr/bin/node
 
 const request = require('request');
+const arg = process.argv[2];
+const url = (`https://swapi-api.hbtn.io/api/films/${arg}`);
 
-// Get the Movie ID from the first command-line argument
-const movieId = process.argv[2];
-
-// API endpoint for the specific movie
-const apiUrl = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
-
-// Function to make a request and return a promise
-const makeRequest = (url) => {
-  return new Promise((resolve, reject) => {
-    request(url, (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(body);
-      }
-    });
+const charNames = (characters, i = 0) => {
+  if (i === characters.length) return;
+  request(characters[i], (error, response, body) => {
+    if (error) throw error;
+    /* convert a string of characters JSON to a javascript object and print it */
+    console.log(JSON.parse(body).name);
+    /* call recursively the function charnames and increment it to pass at the next character */
+    charNames(characters, i + 1);
   });
 };
 
-// Main function to get characters
-const getCharacters = async () => {
-  try {
-    const movieResponse = await makeRequest(apiUrl);
-    const movie = JSON.parse(movieResponse);
-    const characters = movie.characters;
-
-    for (const url of characters) {
-      const characterResponse = await makeRequest(url);
-      const character = JSON.parse(characterResponse);
-      console.log(character.name);
-    }
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
-
-// Call the main function
-getCharacters();
+/* request to the API to recover movie informations */
+request(url, function (error, response, body) {
+  if (error) throw error;
+  /* extract url of characters from the body json response and store it in a var char */
+  const char = JSON.parse(body).characters;
+  /* call the function charNames to print the characters */
+  charNames(char);
+});
