@@ -2,24 +2,24 @@
 
 const request = require('request');
 const arg = process.argv[2];
-const url = (`https://swapi-api.hbtn.io/api/films/${arg}`);
+const url = `https://swapi-api.hbtn.io/api/films/${arg}`;
 
 const charNames = (characters, i = 0) => {
   if (i === characters.length) return;
   request(characters[i], (error, response, body) => {
     if (error) throw error;
-    /* conver a string of characters JSON to a javascript object and print it */
+    // Convert a string of characters JSON to a JavaScript object and print it
     console.log(JSON.parse(body).name);
-    /* call recursively the function charnames and increment it to pass at the next character */
+    // Call recursively the function charNames and increment it to pass to the next character
     charNames(characters, i + 1);
   });
 };
 
-/* request to the API to recover movie informations */
+// Request to the API to recover movie information
 request(url, function (error, response, body) {
   if (error) throw error;
-  /* extract url of characters from the body json response and store it in a var char */
+  // Extract URL of characters from the body JSON response and store it in a var char
   const char = JSON.parse(body).characters;
-  /* call the function charNames to print the characters */
+  // Call the function charNames to print the characters
   charNames(char);
 });
