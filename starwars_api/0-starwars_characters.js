@@ -8,29 +8,35 @@ const movieId = process.argv[2];
 // API endpoint for the specific movie
 const apiUrl = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
 
-// Make a request to the API endpoint
-request(apiUrl, function (error, response, body) {
-  if (error) {
-    console.error('Error:', error);
-    return;
-  }
-
-  // Parse the response body as JSON
-  const movie = JSON.parse(body);
-
-  // Get the list of character URLs
-  const characters = movie.characters;
-
-  // Function to fetch and print a character name
-  const fetchCharacterName = (url) => {
-    request(url, function (error, response, body) {
-      if (!error && response.statusCode === 200) {
-        const character = JSON.parse(body);
-        console.log(character.name);
+// Function to make a request and return a promise
+const makeRequest = (url) => {
+  return new Promise((resolve, reject) => {
+    request(url, (error, response, body) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(body);
       }
     });
-  };
+  });
+};
 
-  // Fetch and print each character name in the same order
-  characters.forEach(fetchCharacterName);
-});
+// Main function to get characters
+const getCharacters = async () => {
+  try {
+    const movieResponse = await makeRequest(apiUrl);
+    const movie = JSON.parse(movieResponse);
+    const characters = movie.characters;
+
+    for (const url of characters) {
+      const characterResponse = await makeRequest(url);
+      const character = JSON.parse(characterResponse);
+      console.log(character.name);
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+// Call the main function
+getCharacters();
