@@ -34,7 +34,9 @@ def rain(walls):
 
     # Calculate water retained
     for i in range(n):
-        water_retained += max(0, min(left_max[i], right_max[i]) - walls[i])
+        water_retained += max(
+            0, min(left_max[i], right_max[i]) - walls[i]
+        )
 
     return water_retained
 
